@@ -1,0 +1,181 @@
+ * Reads all transactions from Transaktioner.txt.
+
+      * For each transaction, finds the correct index in the hash table
+
+      * via FIND-INDEX, then stores it via INDSAET-TRANSAKTION.
+
+       INDLAES-TRANSAKTIONER.
+
+           OPEN INPUT TRANSAKTIONER-INPUT-FILE.
+
+           PERFORM UNTIL END-OF-FILE="Y"
+
+               READ TRANSAKTIONER-INPUT-FILE
+
+               INTO TRANSAKTION-INPUT-RECORD
+
+                   AT END
+
+                       MOVE "Y" TO END-OF-FILE
+
+                   NOT AT END
+
+                       MOVE KONTO-ID OF TRANSAKTION-INPUT-RECORD
+
+                           TO CURRENT-KONTO-ID
+
+                       PERFORM FIND-INDEX
+
+                       PERFORM INDSAET-TRANSAKTION
+
+               END-READ
+
+           END-PERFORM
+
+           CLOSE TRANSAKTIONER-INPUT-FILE.
+
+           MOVE 1 TO IX
+
+           MOVE "N" TO END-OF-FILE
+
+           EXIT.
+
+ 
+
+      * Calculates the hash index for CURRENT-KONTO-ID and finds its row
+
+      * in TRANSACTION-TABLE using linear probing (open addressing).
+
+      *
+
+      * KONTO-ID format is XXXX-XX-XXXXXXXX (e.g. 1234-56-78901234).
+
+      * The dashes are stripped by concatenating three substrings:
+
+      *   chars 1-3, chars 5-6, chars 8-15 => 13 digits total.
+
+      * These are converted to a number and reduced with MOD 12503.
+
+      *
+
+      * Linear probing: if the calculated index is occupied by a
+
+      * different account, the index is incremented by 1
+
+      * (with wrap-around) until an empty slot or the correct account
+
+      * is  found. If we loop all the way back to the starting index,
+
+      * the table is full and the program stops.
+
+       FIND-INDEX.
+
+           STRING  CURRENT-KONTO-ID(1:3) DELIMITED SIZE
+
+                   CURRENT-KONTO-ID(5:2) DELIMITED SIZE
+
+                   CURRENT-KONTO-ID(8:8) DELIMITED SIZE
+
+                   INTO ID-DIGITS
+
+           MOVE ID-DIGITS TO ID-NUM
+
+ 
+
+           COMPUTE HASH-INDEX = FUNCTION MOD(ID-NUM, 12503)
+
+ 
+
+      *     MOD can return 0, but table indices start at 1
+
+           IF HASH-INDEX = 0
+
+               MOVE 12503 TO HASH-INDEX
+
+           END-IF
+
+ 
+
+           MOVE HASH-INDEX TO ID-INDEX
+
+ 
+
+           PERFORM UNTIL INDEX-FOUND="Y"
+
+               IF      COSTUMER-KONTO-ID
+
+                       OF COSTUMER-ROW(ID-INDEX) =
+
+                       CURRENT-KONTO-ID
+
+      *                 Account already in table - reuse this row
+
+                           MOVE "Y" TO INDEX-FOUND
+
+               ELSE IF COSTUMER-KONTO-ID
+
+                       OF COSTUMER-ROW(ID-INDEX) = "-"
+
+      *                 Empty slot found - register the account here
+
+                           MOVE CURRENT-KONTO-ID
+
+                               TO COSTUMER-KONTO-ID
+
+                               OF COSTUMER-ROW(ID-INDEX)
+
+                           MOVE "Y" TO INDEX-FOUND
+
+               ELSE
+
+      *                 Collision - try next index (linear probing)
+
+                           ADD 1 TO ID-INDEX
+
+ 
+
+      *                   Wrap around if we reach the end of the table
+
+                           IF ID-INDEX > 12503
+
+                               MOVE 1 TO ID-INDEX
+
+                           END-IF
+
+ 
+
+      *                   If we are back at the start, the table is full
+
+                           IF ID-INDEX = HASH-INDEX
+
+                               DISPLAY "error hasing KONTO-ID to index"
+
+                               STOP RUN
+
+                           END-IF
+
+               END-IF
+
+           END-PERFORM
+
+           MOVE "N" TO INDEX-FOUND
+
+           EXIT.
+
+ 
+
+      * Inserts the current transaction into the correct row and column
+
+      * in TRANSACTION-TABLE. COUNTER tracks how many transactions
+
+      * have already been stored for this account.
+
+       INDSAET-TRANSAKTION.
+
+           ADD 1 TO COUNTER OF COSTUMER-ROW(ID-INDEX)
+
+           MOVE TRANSAKTION-INPUT-RECORD TO
+
+                TRANSACTION(ID-INDEX, COUNTER OF COSTUMER-ROW(ID-INDEX))
+
+           EXIT.

@@ -1,0 +1,94 @@
+Kunde-ID:858-41-72821, Navn: Camilla Christensen, Saldo: 3606986.57 DKK, Avg: 000000040077628
+Kunde-ID:458-73-25482, Navn: Anne Christensen, Saldo: 3397930.85 DKK, Avg: 000000033979308
+Kunde-ID:520-89-75186, Navn: Camilla Christensen, Saldo: 3354942.02 DKK, Avg: 000000055915700
+Kunde-ID:770-68-39630, Navn: Mette Thomsen, Saldo: 3351860.73 DKK, Avg: 000000041898259
+Kunde-ID:238-97-55655, Navn: Jens Christensen, Saldo: 3347863.80 DKK, Avg: 000000037198486
+Kunde-ID:482-90-93168, Navn: Marie Pedersen, Saldo: 3189987.19 DKK, Avg: 000000031899871
+Kunde-ID:226-58-36392, Navn: Jens Olsen, Saldo: 2999677.90 DKK, Avg: 000000029996779
+Kunde-ID:756-20-12899, Navn: Niels Olsen, Saldo: 2940527.64 DKK, Avg: 000000029405276
+Kunde-ID:679-38-32221, Navn: S�ren Christensen, Saldo: 2920805.44 DKK, Avg: 000000032453393
+Kunde-ID:728-39-32880, Navn: Camilla Olsen, Saldo: 2899219.16 DKK, Avg: 000000032213546
+Kunde-ID:981-69-22928, Navn: Mette Mortensen, Saldo: 2863844.99 DKK, Avg: 000000028638449
+Kunde-ID:252-49-83446, Navn: Lars Olsen, Saldo: 2845917.68 DKK, Avg: 000000031621307
+Kunde-ID:256-39-33996, Navn: Peter Nielsen, Saldo: 2816181.94 DKK, Avg: 000000035202274
+Kunde-ID:354-66-81414, Navn: Peter Mortensen, Saldo: 2650149.57 DKK, Avg: 000000037859279
+Kunde-ID:920-13-44487, Navn: Camilla Larsen, Saldo: 2619717.22 DKK, Avg: 000000026197172
+Kunde-ID:981-13-34930, Navn: Marie Thomsen, Saldo: 2587703.64 DKK, Avg: 000000028752262
+Kunde-ID:689-73-55346, Navn: Marie Mortensen, Saldo: 2567874.19 DKK, Avg: 000000025678741
+Kunde-ID:701-67-76896, Navn: Niels Jensen, Saldo: 2544608.71 DKK, Avg: 000000028273430
+Kunde-ID:784-72-95729, Navn: Camilla Larsen, Saldo: 2513135.11 DKK, Avg: 000000025131351
+Kunde-ID:165-69-84705, Navn: Camilla Nielsen, Saldo: 2506687.96 DKK, Avg: 000000027852088
+
+Måned      Indbetalinger(dkk)    Udbetalinger(dkk)
+00001 604405581.16 -  605382754.48
+00002 564287658.03 -  526372623.04
+00003 600510693.23 -  600882708.77
+00004 544813755.38 -  574796873.70
+00005 565887672.58 -  574862252.88
+00006 552913484.49 -  573572609.93
+00007 575673360.96 -  577674918.67
+00008 587166050.93 -  633184324.92
+00009 540257800.82 -  570043317.00
+00010 555094477.51 -  597108552.57
+00011 593930961.82 -  563729572.86
+00012 618118713.42 -  590358539.83
+
+Butik         Antal transactioner
+Elektronikbutik    04188
+Restaurant         04269
+Caf�               04194
+Tankstation        04111
+Biograf            04041
+Fitnesscenter      04228
+Bageri             04159
+Boghandel          04196
+M�belbutik         04264
+T�jbutik           04173
+Supermarked        04136
+Blomsterhandler    04215
+Apotek             04028
+
+top 5 butiker
+Butik navn:M�belbutik, Omsætning: 1101473045.18 DKK
+Butik navn:T�jbutik, Omsætning: 1088619449.61 DKK
+Butik navn:Boghandel, Omsætning: 1086113724.59 DKK
+Butik navn:Restaurant, Omsætning: 1085671627.56 DKK
+Butik navn:Fitnesscenter, Omsætning: 1080461637.69 DKK
+
+00001 Indbetaling     : 01527
+00001 Udbetaling      : 01606
+00001 Overf๘rsel    : 01499
+00002 Indbetaling     : 01436
+00002 Udbetaling      : 01432
+00002 Overf๘rsel    : 01376
+00003 Indbetaling     : 01578
+00003 Udbetaling      : 01499
+00003 Overf๘rsel    : 01576
+00004 Indbetaling     : 01484
+00004 Udbetaling      : 01496
+00004 Overf๘rsel    : 01446
+00005 Indbetaling     : 01487
+00005 Udbetaling      : 01494
+00005 Overf๘rsel    : 01544
+00006 Indbetaling     : 01534
+00006 Udbetaling      : 01430
+00006 Overf๘rsel    : 01418
+00007 Indbetaling     : 01476
+00007 Udbetaling      : 01542
+00007 Overf๘rsel    : 01539
+00008 Indbetaling     : 01522
+00008 Udbetaling      : 01547
+00008 Overf๘rsel    : 01610
+00009 Indbetaling     : 01487
+00009 Udbetaling      : 01414
+00009 Overf๘rsel    : 01472
+00010 Indbetaling     : 01484
+00010 Udbetaling      : 01558
+00010 Overf๘rsel    : 01477
+00011 Indbetaling     : 01498
+00011 Udbetaling      : 01589
+00011 Overf๘rsel    : 01518
+00012 Indbetaling     : 01588
+00012 Udbetaling      : 01505
+00012 Overf๘rsel    : 01514
+STD DEV:       340476.07

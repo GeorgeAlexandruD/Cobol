@@ -1,0 +1,77 @@
+ID: id
+NAVN: first_name last_name
+ADRESSE: VEJNAVN: street, HUSNR:, SIDE: sid
+LOKATION: 0000, city
+TELEFON: phone
+EMAIL: email
+
+ID: 1
+NAVN: Maria Jensen
+ADRESSE: VEJNAVN: Østergade, HUSNR: 12, ETAGE: 2, SIDE: tv
+LOKATION: 1100, København
+TELEFON: +4520304050
+EMAIL: maria.jensen@mail.dk
+
+ID: 2
+NAVN: Lars Nielsen
+ADRESSE: VEJNAVN: Vesterbrogade, HUSNR: 45
+LOKATION: 1620, København
+TELEFON: +4531415161
+EMAIL: lars.nielsen@gmail.com
+
+ID: 3
+NAVN: Anna Madsen
+ADRESSE: VEJNAVN: Nørregade, HUSNR: 7, ETAGE: 3, SIDE: th
+LOKATION: 8000, Aarhus
+TELEFON: +4542526272
+EMAIL: anna.madsen@outlook.dk
+
+ID: 4
+NAVN: Peter Hansen
+ADRESSE: VEJNAVN: Søndergade, HUSNR: 23, ETAGE: 1, SIDE: mf
+LOKATION: 5000, Odense
+TELEFON: +4553637383
+EMAIL: peter.hansen@mail.dk
+
+ID: 5
+NAVN: Sofie Christensen
+ADRESSE: VEJNAVN: Bredgade, HUSNR: 89, ETAGE: 4, SIDE: th
+LOKATION: 9000, Aalborg
+TELEFON: +4564748494
+EMAIL: sofie.chr@gmail.com
+
+ID: 6
+NAVN: Mikkel Andersen
+ADRESSE: VEJNAVN: Langgade, HUSNR: 3
+LOKATION: 6700, Esbjerg
+TELEFON: +4575859605
+EMAIL: mikkel.and@mail.dk
+
+ID: 7
+NAVN: Louise Pedersen
+ADRESSE: VEJNAVN: Havnegade, HUSNR: 56, ETAGE: 2, SIDE: tv
+LOKATION: 4000, Roskilde
+TELEFON: +4586960716
+EMAIL: louise.ped@outlook.dk
+
+ID: 8
+NAVN: Thomas Thomsen
+ADRESSE: VEJNAVN: Kirkegade, HUSNR: 18, ETAGE: 1, SIDE: th
+LOKATION: 3000, Helsingør
+TELEFON: +4517283940
+EMAIL: thomas.tho@gmail.com
+
+ID: 9
+NAVN: Emma Larsen
+ADRESSE: VEJNAVN: Strandvejen, HUSNR: 101, ETAGE: 5, SIDE: mf
+LOKATION: 2900, Hellerup
+TELEFON: +4528394051
+EMAIL: emma.larsen@mail.dk
+
+ID: 10
+NAVN: Jonas Sørensen
+ADRESSE: VEJNAVN: Pilgrimsvej, HUSNR: 34
+LOKATION: 2400, København NV
+TELEFON: +4539405162
+EMAIL: jonas.sor@gmail.com
+

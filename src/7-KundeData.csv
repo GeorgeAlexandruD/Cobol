@@ -1,0 +1,11 @@
+id,first_name,last_name,street,number,floor,side,post_number,city,phone,email
+1,Maria,Jensen,Østergade,12,2,tv,1100,København,+4520304050,maria.jensen@mail.dk
+2,Lars,Nielsen,Vesterbrogade,45,0,,1620,København,+4531415161,lars.nielsen@gmail.com
+3,Anna,Madsen,Nørregade,7,3,th,8000,Aarhus,+4542526272,anna.madsen@outlook.dk
+4,Peter,Hansen,Søndergade,23,1,mf,5000,Odense,+4553637383,peter.hansen@mail.dk
+5,Sofie,Christensen,Bredgade,89,4,th,9000,Aalborg,+4564748494,sofie.chr@gmail.com
+6,Mikkel,Andersen,Langgade,3,0,,6700,Esbjerg,+4575859605,mikkel.and@mail.dk
+7,Louise,Pedersen,Havnegade,56,2,tv,4000,Roskilde,+4586960716,louise.ped@outlook.dk
+8,Thomas,Thomsen,Kirkegade,18,1,th,3000,Helsingør,+4517283940,thomas.tho@gmail.com
+9,Emma,Larsen,Strandvejen,101,5,mf,2900,Hellerup,+4528394051,emma.larsen@mail.dk
+10,Jonas,Sørensen,Pilgrimsvej,34,,,2400,København NV,+4539405162,jonas.sor@gmail.com

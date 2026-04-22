@@ -1,0 +1,277 @@
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. Antimoneylaudering.
+
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+       SELECT CUSTOMER-FILE ASSIGN TO "12-KundeOplysninger.txt"
+           ORGANIZATION IS LINE SEQUENTIAL.
+       SELECT SANCTIONS-FILE ASSIGN TO "12-SanctionList.txt"
+           ORGANIZATION IS LINE SEQUENTIAL.
+
+DATA DIVISION.
+FILE SECTION.
+FD CUSTOMER-FILE.
+       01 KUNDE-REC.
+           02 KUNDE-ID          PIC X(11).
+           02 KUNDE-NAVN        PIC X(20).
+           02 KUNDE-FOEDSEL     PIC X(10).
+           02 KUNDE-ADRESSE     PIC X(30).
+           02 KUNDE-LAND        PIC X(2).
+
+FD SANCTIONS-FILE.
+       01 SANCTION-REC.
+           02 SANCTION-ID       PIC X(5).
+           02 SANCTION-NAVN     PIC X(20).
+           02 SANCTION-ALIAS1   PIC X(20).
+           02 SANCTION-ALIAS2   PIC X(20).
+           02 SANCTION-ALIAS3   PIC X(20).
+           02 SANCTION-ALIAS4   PIC X(20).
+           02 SANCTION-ALIAS5   PIC X(20).
+           02 SANCTION-FOEDSEL  PIC X(10).
+           02 SANCTION-LAND     PIC X(2).
+
+WORKING-STORAGE SECTION.
+       01 WS-EOF-CUSTOMERS      PIC X VALUE "N".
+       01 WS-EOF-SANCTIONS      PIC X VALUE "N".
+       01 WS-SANCTIONS-IDX      PIC 9(3) VALUE 0.
+       01 WS-USER-IDX           PIC 9(3) VALUE 0.
+
+       01 WS-SANCTIONS-LIST OCCURS 200.
+           02 WS-SANCTION-ID    PIC X(5).
+           02 WS-SANCTION-NAVN  PIC X(20).
+           02 WS-ALIAS1         PIC X(20).
+           02 WS-ALIAS2         PIC X(20).
+           02 WS-ALIAS3         PIC X(20).
+           02 WS-ALIAS4         PIC X(20).
+           02 WS-ALIAS5         PIC X(20).
+           02 WS-SANCTION-FOEDSEL PIC X(10).
+           02 WS-SANCTION-LAND  PIC X(2).
+
+       01 WS-USER-LIST OCCURS 500.
+           02 WS-KUNDE-ID       PIC X(11).
+           02 WS-KUNDE-NAVN     PIC X(20).
+           02 WS-KUNDE-FOEDSEL  PIC X(10).
+           02 WS-KUNDE-ADRESSE  PIC X(30).
+           02 WS-KUNDE-LAND     PIC X(2).
+
+       01 WS-MATCH-LIST OCCURS 500.
+           02 WS-MATCH-ENTRY occurs 200.
+               03 WS-MATCH-SCORE    PIC 9(3) value 0.
+
+       01 I PIC 9(3).
+       01 J PIC 9(3).
+       01 TEMP-I PIC 9(3).
+       01 TEMP-J PIC 9(3).
+       01 FUZZY-CUSTOMER-LEN pic 9(2).
+       01 FUZZY-SUSPECT-LEN pic 9(2).
+
+       01 WS-FUZZY-TABLE.
+           02 FUZZY-SEARCH-ROW occurs 21.
+                03 FUZZY-SEARCH-COLUMN occurs 21.
+                    04 FUZZY-SEARCH-SCORE pic s9(2) value -1.
+           
+       01 WS-CUSTOMER-YEAR-2DIG    PIC 9(2).
+       01 WS-CUSTOMER-YEAR-4DIG    PIC 9(4).
+       01 WS-SANCTIONED-YEAR-4DIG PIC 9(4).
+       01 FUZZY-CANDIDATE-1 pic 9(2).
+       01 FUZZY-CANDIDATE-2 pic 9(2).
+       01 FUZZY-CANDIDATE-3 pic 9(2).
+       01 FUZZY-PERCENTAGE-UNIT pic 9(3)v99.
+       01 FUZZY-PERCENTAGE-VALUE pic 9(3)v99.
+       01 WS-FUZZY-SUSPECT-NAME    PIC X(20).
+       01 WS-FUZZY-ALIAS-SCORES    OCCURS 6 PIC 9(2).
+       01 WS-FUZZY-BEST-SCORE      PIC 9(2).
+
+PROCEDURE DIVISION.
+
+       OPEN INPUT SANCTIONS-FILE
+       OPEN INPUT CUSTOMER-FILE
+
+       PERFORM LOAD-SANCTIONS
+       PERFORM LOAD-CUSTOMERS
+
+       CLOSE SANCTIONS-FILE
+       CLOSE CUSTOMER-FILE
+
+       PERFORM COMPARE-NAMES
+       PERFORM COMPARE-COUNTRIES
+       PERFORM COMPARE-BIRTHDAYS
+
+       PERFORM PRINT-MATCHES
+
+       STOP RUN.
+
+       LOAD-SANCTIONS.
+           READ SANCTIONS-FILE
+               AT END MOVE "Y" TO WS-EOF-SANCTIONS
+           END-READ
+           PERFORM UNTIL WS-EOF-SANCTIONS = "Y"
+               ADD 1 TO WS-SANCTIONS-IDX
+               MOVE SANCTION-ID      TO WS-SANCTION-ID(WS-SANCTIONS-IDX)
+               MOVE SANCTION-NAVN    TO WS-SANCTION-NAVN(WS-SANCTIONS-IDX)
+               MOVE SANCTION-ALIAS1  TO WS-ALIAS1(WS-SANCTIONS-IDX)
+               MOVE SANCTION-ALIAS2  TO WS-ALIAS2(WS-SANCTIONS-IDX)
+               MOVE SANCTION-ALIAS3  TO WS-ALIAS3(WS-SANCTIONS-IDX)
+               MOVE SANCTION-ALIAS4  TO WS-ALIAS4(WS-SANCTIONS-IDX)
+               MOVE SANCTION-ALIAS5  TO WS-ALIAS5(WS-SANCTIONS-IDX)
+               MOVE SANCTION-FOEDSEL TO WS-SANCTION-FOEDSEL(WS-SANCTIONS-IDX)
+               MOVE SANCTION-LAND    TO WS-SANCTION-LAND(WS-SANCTIONS-IDX)
+               READ SANCTIONS-FILE
+                   AT END MOVE "Y" TO WS-EOF-SANCTIONS
+               END-READ
+           END-PERFORM.
+
+       LOAD-CUSTOMERS.
+           READ CUSTOMER-FILE
+               AT END MOVE "Y" TO WS-EOF-CUSTOMERS
+           END-READ
+           PERFORM UNTIL WS-EOF-CUSTOMERS = "Y"
+               ADD 1 TO WS-USER-IDX
+               MOVE KUNDE-ID      TO WS-KUNDE-ID(WS-USER-IDX)
+               MOVE KUNDE-NAVN    TO WS-KUNDE-NAVN(WS-USER-IDX)
+               MOVE KUNDE-FOEDSEL TO WS-KUNDE-FOEDSEL(WS-USER-IDX)
+               MOVE KUNDE-ADRESSE TO WS-KUNDE-ADRESSE(WS-USER-IDX)
+               MOVE KUNDE-LAND    TO WS-KUNDE-LAND(WS-USER-IDX)
+
+               READ CUSTOMER-FILE
+                   AT END MOVE "Y" TO WS-EOF-CUSTOMERS
+               END-READ
+           END-PERFORM.
+
+       COMPARE-COUNTRIES.
+           PERFORM VARYING WS-USER-IDX FROM 1 BY 1 UNTIL WS-USER-IDX > 500
+               PERFORM VARYING WS-SANCTIONS-IDX FROM 1 BY 1 UNTIL WS-SANCTIONS-IDX > 200
+                   IF WS-KUNDE-LAND(WS-USER-IDX) = WS-SANCTION-LAND(WS-SANCTIONS-IDX)
+                       ADD 20 TO WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX)  *> max 20%, could be modified for a config file
+                   END-IF
+               END-PERFORM
+           END-PERFORM.
+       exit.
+
+       COMPARE-BIRTHDAYS.
+           PERFORM VARYING WS-USER-IDX FROM 1 BY 1 UNTIL WS-USER-IDX > 500
+               PERFORM VARYING WS-SANCTIONS-IDX FROM 1 BY 1 UNTIL WS-SANCTIONS-IDX > 200
+                   PERFORM BIRTHDAY-CONVERTER
+               END-PERFORM
+           END-PERFORM.
+       exit.
+
+       BIRTHDAY-CONVERTER. *> DDMMYY vs YYYY-MM-DD
+    *>    date
+           IF WS-KUNDE-FOEDSEL(WS-USER-IDX)(1:2) = WS-SANCTION-FOEDSEL(WS-SANCTIONS-IDX)(9:2)
+               IF WS-KUNDE-FOEDSEL(WS-USER-IDX)(3:2) = WS-SANCTION-FOEDSEL(WS-SANCTIONS-IDX)(6:2)
+                   MOVE WS-SANCTION-FOEDSEL(WS-SANCTIONS-IDX)(1:4) TO WS-SANCTIONED-YEAR-4DIG
+                   MOVE WS-KUNDE-FOEDSEL(WS-USER-IDX)(5:2) TO WS-CUSTOMER-YEAR-2DIG
+                   IF WS-CUSTOMER-YEAR-2DIG > 26 *> born in year 36 becomes 1936, year 02 becomes 2002
+                       MOVE 1900 TO WS-CUSTOMER-YEAR-4DIG
+                       ADD WS-CUSTOMER-YEAR-2DIG TO WS-CUSTOMER-YEAR-4DIG
+                       IF WS-CUSTOMER-YEAR-4DIG = WS-SANCTIONED-YEAR-4DIG
+                           ADD 30 TO WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX) *> max 30%, could be modified for a config file
+                            
+                       END-IF
+                   ELSE
+                       MOVE 2000 TO WS-CUSTOMER-YEAR-4DIG
+                       ADD WS-CUSTOMER-YEAR-2DIG TO WS-CUSTOMER-YEAR-4DIG
+                       IF WS-CUSTOMER-YEAR-4DIG = WS-SANCTIONED-YEAR-4DIG
+                           ADD 30 TO WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX) *> max 30%, could be modified for a config file
+                       END-IF
+                   END-IF 
+               END-IF
+           END-IF
+       exit.
+
+       COMPARE-NAMES.
+           PERFORM VARYING WS-USER-IDX FROM 1 BY 1 UNTIL WS-USER-IDX > 500
+               PERFORM VARYING WS-SANCTIONS-IDX FROM 1 BY 1 UNTIL WS-SANCTIONS-IDX > 200
+
+                   MOVE ZERO  TO WS-FUZZY-BEST-SCORE
+                   MOVE ZERO  TO FUZZY-CUSTOMER-LEN
+                   MOVE ZERO  TO FUZZY-PERCENTAGE-UNIT
+                   MOVE ZERO  TO FUZZY-PERCENTAGE-VALUE
+
+                   MOVE WS-SANCTION-NAVN(WS-SANCTIONS-IDX) TO WS-FUZZY-SUSPECT-NAME
+                   MOVE ZEROS TO WS-FUZZY-TABLE
+                   PERFORM FUZZY-SEARCH
+                   MOVE FUZZY-SEARCH-SCORE(21, 21) TO WS-FUZZY-ALIAS-SCORES(1)
+                   
+                   MOVE WS-ALIAS1(WS-SANCTIONS-IDX) TO WS-FUZZY-SUSPECT-NAME
+                   MOVE ZEROS TO WS-FUZZY-TABLE
+                   PERFORM FUZZY-SEARCH
+                   MOVE FUZZY-SEARCH-SCORE(21, 21) TO WS-FUZZY-ALIAS-SCORES(2)
+                   
+                   MOVE WS-ALIAS2(WS-SANCTIONS-IDX) TO WS-FUZZY-SUSPECT-NAME
+                   MOVE ZEROS TO WS-FUZZY-TABLE
+                   PERFORM FUZZY-SEARCH
+                   MOVE FUZZY-SEARCH-SCORE(21, 21) TO WS-FUZZY-ALIAS-SCORES(3)
+                   
+                   MOVE WS-ALIAS3(WS-SANCTIONS-IDX) TO WS-FUZZY-SUSPECT-NAME
+                   MOVE ZEROS TO WS-FUZZY-TABLE
+                   PERFORM FUZZY-SEARCH
+                   MOVE FUZZY-SEARCH-SCORE(21, 21) TO WS-FUZZY-ALIAS-SCORES(4)
+                   
+                   MOVE WS-ALIAS4(WS-SANCTIONS-IDX) TO WS-FUZZY-SUSPECT-NAME
+                   MOVE ZEROS TO WS-FUZZY-TABLE
+                   PERFORM FUZZY-SEARCH
+                   MOVE FUZZY-SEARCH-SCORE(21, 21) TO WS-FUZZY-ALIAS-SCORES(5)
+        
+                   MOVE FUNCTION MIN(WS-FUZZY-ALIAS-SCORES(1) WS-FUZZY-ALIAS-SCORES(2) WS-FUZZY-ALIAS-SCORES(3) WS-FUZZY-ALIAS-SCORES(4) WS-FUZZY-ALIAS-SCORES(5)) TO WS-FUZZY-BEST-SCORE
+                   MOVE FUNCTION length(FUNCTION trim(WS-KUNDE-NAVN(WS-USER-IDX))) TO FUZZY-CUSTOMER-LEN
+                   *> n-x/n*50  where 50 is the max value in percentage a perfect name match is valued at 
+                   MOVE FUZZY-CUSTOMER-LEN TO FUZZY-PERCENTAGE-UNIT
+                   SUBTRACT WS-FUZZY-BEST-SCORE from FUZZY-PERCENTAGE-UNIT
+
+                   MULTIPLY FUZZY-PERCENTAGE-UNIT BY 50 GIVING FUZZY-PERCENTAGE-UNIT
+
+                   DIVIDE FUZZY-PERCENTAGE-UNIT BY FUZZY-CUSTOMER-LEN GIVING FUZZY-PERCENTAGE-VALUE
+                   ADD FUZZY-PERCENTAGE-VALUE TO WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX)
+
+               END-PERFORM
+           END-PERFORM.
+       exit.
+       
+       FUZZY-SEARCH. *> fills out the entire matrix, regardless of name size, that way the correct value is always on the same 21x21 position.
+           MOVE FUNCTION length(WS-KUNDE-NAVN(WS-USER-IDX)) TO FUZZY-CUSTOMER-LEN
+           MOVE FUNCTION length(WS-FUZZY-SUSPECT-NAME) TO FUZZY-SUSPECT-LEN
+           ADD 1 TO FUZZY-CUSTOMER-LEN
+           ADD 1 TO FUZZY-SUSPECT-LEN
+
+           PERFORM VARYING I FROM 1 BY 1 UNTIL I > 21
+               MOVE I TO J 
+               SUBTRACT 1 from J
+               MOVE J TO FUZZY-SEARCH-SCORE(I, 1)
+           END-PERFORM
+           PERFORM VARYING J FROM 1 BY 1 UNTIL J > 21
+               MOVE J TO I 
+               SUBTRACT 1 from I
+               MOVE I TO FUZZY-SEARCH-SCORE(1, J)
+           END-PERFORM
+
+           PERFORM varying I from 2 BY 1 until I > FUZZY-CUSTOMER-LEN
+               PERFORM  varying J from 2 BY 1 until J > FUZZY-SUSPECT-LEN
+                   MOVE I TO TEMP-I
+                   MOVE J TO TEMP-J
+                   SUBTRACT 1 from TEMP-I
+                   SUBTRACT 1 from TEMP-J
+                   IF WS-KUNDE-NAVN(WS-USER-IDX)(TEMP-I:1) = WS-FUZZY-SUSPECT-NAME(TEMP-J:1)
+                       MOVE FUZZY-SEARCH-SCORE(TEMP-I,TEMP-J) TO FUZZY-SEARCH-SCORE(I,J)
+                   ELSE
+                       ADD 1 TO FUZZY-SEARCH-SCORE(I, TEMP-J) GIVING FUZZY-CANDIDATE-1
+                       ADD 1 TO FUZZY-SEARCH-SCORE(TEMP-I, J) GIVING FUZZY-CANDIDATE-2
+                       ADD 1 TO FUZZY-SEARCH-SCORE(TEMP-I, TEMP-J) GIVING FUZZY-CANDIDATE-3
+                       MOVE FUNCTION  min(FUZZY-CANDIDATE-1, FUZZY-CANDIDATE-2, FUZZY-CANDIDATE-3 ) TO FUZZY-SEARCH-SCORE(I,J)
+                       
+                   END-IF
+               END-PERFORM
+           END-PERFORM
+       exit.
+       
+       PRINT-MATCHES.
+           PERFORM VARYING WS-USER-IDX FROM 1 BY 1 UNTIL WS-USER-IDX > 500
+               PERFORM VARYING WS-SANCTIONS-IDX FROM 1 BY 1 UNTIL WS-SANCTIONS-IDX > 200
+                   IF WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX) > 70 *> threshold, can be modified
+                       DISPLAY WS-KUNDE-ID(WS-USER-IDX) " - " WS-SANCTION-ID(WS-SANCTIONS-IDX) " - " WS-MATCH-SCORE(WS-USER-IDX, WS-SANCTIONS-IDX) "%"
+                   END-IF
+               END-PERFORM
+           END-PERFORM
+       exit.
